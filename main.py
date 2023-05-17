@@ -104,13 +104,16 @@ class Desktop:
             if root.name == parent_value:
                 if root.elements < 4:
                     return True
-                else:
-                    return False
+            elif root.father is not None and root.name == parent_value:
+                for hermano in root.father.currents:
+                    if hermano != root and hermano.name == parent_value:
+                        return False
+            else: 
 
-            self.available_folder(root.l_child, parent_value)
-            self.available_folder(root.l_central_child, parent_value)
-            self.available_folder(root.r_central_child, parent_value)
-            self.available_folder(root.r_child, parent_value)
+                self.available_folder(root.l_child, parent_value)
+                self.available_folder(root.l_central_child, parent_value)
+                self.available_folder(root.r_central_child, parent_value)
+                self.available_folder(root.r_child, parent_value)
 
     def modify_value_folder(self,root, old_value, new_value):
         if root.name == old_value:
@@ -137,6 +140,40 @@ class Desktop:
             self.modify_value_file(root.l_central_child, old_value, new_value)
             self.modify_value_file(root.r_central_child, old_value, new_value)
             self.modify_value_file(root.r_child, old_value, new_value)
+    
+    def all_folder(self, root, greater):
+        #print(greater)
+        if root is None:
+            return
+        
+        if isinstance(root, Folder):
+            if root.r_child is not None:
+                if root.r_child.elements >=0:
+                    greater.append(root.r_child)
+                    self.all_folder(root.r_child, greater)
+                
+            if root.r_central_child is not None:
+               if root.r_central_child.elements >=0:
+                    greater.append(root.r_central_child)
+                    self.all_folder(root.r_central_child, greater)
+            if root.l_central_child is not None:
+               if root.l_central_child.elements >=0:
+                    greater.append(root.l_central_child)
+                    self.all_folder(root.l_central_child, greater)
+               
+            if root.l_child is not None:
+               if root.l_child.elements >=0:
+                    greater.append(root.l_child)
+                    self.all_folder(root.l_child, greater)
+            
+        return reversed(greater)
+
+    def max_folder(self, folders):
+        mayor = max(folders, key=lambda x : x.elements)
+        return mayor
+
+            
+
 
 
     def imprimir_arbol(self):
@@ -180,7 +217,7 @@ class Menu:
                     self.desktop.insert_folder(self.desktop.root, parent_value_folder, new_value_folder)
                 else:
                     while self.desktop.available_folder(self.desktop.root, parent_value_folder) == False:
-                        parent_value_folder = input("Ingresa el nombre de un carpeta con espacio: ")
+                        parent_value_folder = input("Ingresa el nombre de un carpeta con espacio o que el nombre no este repetido: ")
                     self.desktop.insert_folder(self.desktop.root, parent_value_folder, new_value_folder)
                 
             elif opcion == "2":
@@ -213,7 +250,6 @@ class Menu:
 
 menu = Menu()
 menu.begin()
-
 # desktop = Desktop()
 # # files = File("hola.txt 56")
 
@@ -222,11 +258,48 @@ menu.begin()
 # desktop.insert_folder(desktop.root, "root", "f1")
 # desktop.insert_folder(desktop.root, "root", "f2")
 # desktop.insert_folder(desktop.root, "root", "f3")
-# desktop.insert_folder(desktop.root, "root", "f4")
+
+# desktop.insert_folder(desktop.root, "f1", "hola")
+
+
+# # desktop.insert_folder(desktop.root, "root", "f4")
 # desktop.insert_folder(desktop.root, "f3", "f4")
 # desktop.insert_folder(desktop.root, "f3", "f6")
 # desktop.insert_folder(desktop.root, "f3", "f3")
-# desktop.insert_folder(desktop.root, "f3", "f9")
+
+
+# desktop.insert_folder(desktop.root, "f4", "f")
+# desktop.insert_folder(desktop.root, "f4", "f")
+# desktop.insert_folder(desktop.root, "f4", "f")
+
+
+
+
+# desktop.insert_folder(desktop.root, "f2", "f4")
+# desktop.insert_folder(desktop.root, "f2", "f6")
+# desktop.insert_folder(desktop.root, "f2", "f3")
+# desktop.insert_folder(desktop.root, "f2", "f9")
+
+# desktop.insert_folder(desktop.root, "f9", "fol1")
+# desktop.insert_folder(desktop.root, "f9", "fol2")
+# desktop.insert_folder(desktop.root, "f9", "fol3")
+
+# desktop.insert_folder(desktop.root, "fol1", "fol1")
+# desktop.insert_folder(desktop.root, "fol1", "fol2")
+# desktop.insert_folder(desktop.root, "fol1", "fol3")
+# desktop.insert_folder(desktop.root, "fol1", "fol3")
+
+# desktop.insert_folder(desktop.root, "fol3", "fol1")
+# desktop.insert_folder(desktop.root, "fol3", "fol2")
+# desktop.insert_folder(desktop.root, "fol3", "fol3")
+# desktop.insert_folder(desktop.root, "fol3", "fol3")
+
+# desktop.imprimir_arbol()
+# lista = desktop.all_folder(desktop.root, [])
+# # for i in lista:
+# #     print(i.name)
+# print(desktop.max_folder(lista).name)
+
 # desktop.modificar_valor(desktop.root, "f3", "g1")
 # desktop.modificar_valor(desktop.root, "f1", "g1")
 # # desktop.insert_folder(desktop.root, "f3", "f10")
@@ -250,3 +323,5 @@ menu.begin()
 # print(desktop.root.l_child.r_central_child.filename)
 # print(desktop.root.l_child.r_child.filename)
 # print(desktop.root.elements)
+
+

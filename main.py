@@ -112,7 +112,7 @@ class Desktop:
             self.available_folder(root.r_central_child, parent_value)
             self.available_folder(root.r_child, parent_value)
 
-    def modify_value(self,root, old_value, new_value):
+    def modify_value_folder(self,root, old_value, new_value):
         if root.name == old_value:
             if root.father is not None:
                 for hermano in root.father.currents:
@@ -124,7 +124,20 @@ class Desktop:
             return
 
         for hijo in root.currents:
-            self.modify_value(hijo, old_value, new_value)
+            self.modify_value_folder(hijo, old_value, new_value)
+    
+    def modify_value_file(self,root, old_value, new_value):
+        if root:
+            if isinstance(root, File):
+                if root.filename == old_value:
+                    root.filename = new_value
+                    return True
+
+            self.modify_value_file(root.l_child, old_value, new_value)
+            self.modify_value_file(root.l_central_child, old_value, new_value)
+            self.modify_value_file(root.r_central_child, old_value, new_value)
+            self.modify_value_file(root.r_child, old_value, new_value)
+
 
     def imprimir_arbol(self):
         self.imprimir_subarbol(self.root, 0)
@@ -183,12 +196,12 @@ class Menu:
             elif opcion == "3":
                 old_folder = input("Ingrese el nombre de la carpeta a cambiar:")
                 new_folder = input("Ingrese el nuevo nombre: ")
-                self.desktop.modify_value(self.desktop.root, old_folder, new_folder)
+                self.desktop.modify_value_folder(self.desktop.root, old_folder, new_folder)
 
             elif opcion == "4":
                 old_folder = input("Ingrese el nombre del archivo a cambiar:")
                 new_folder = input("Ingrese el nuevo nombre: ")
-                self.desktop.modify_value(self.desktop.root, old_folder, new_folder)
+                self.desktop.modify_value_file(self.desktop.root, old_folder, new_folder)
 
             elif opcion == "5":
                 break
